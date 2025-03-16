@@ -44,11 +44,11 @@ spring:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka-server:8761/eureka/  # Update to use Eureka service name in Kubernetes
-    register-with-eureka: true  # Explicitly enable registration (optional, default is true)
-    fetch-registry: true  # Ensure it fetches the registry (optional, default is true)
+      defaultZone: http://10.200.1.203:8761/eureka/  # Replace eureka-server with IP
+    register-with-eureka: true
+    fetch-registry: true
   instance:
-    prefer-ip-address: true  # Tell Eureka to register the IP instead of hostname
+    prefer-ip-address: true  # Optional: ensures IP registration
     leaseRenewalIntervalInSeconds: 30  # Heartbeat interval (default)
     leaseExpirationDurationInSeconds: 90  # Time before Eureka considers the instance expired (default)
 jwt:
