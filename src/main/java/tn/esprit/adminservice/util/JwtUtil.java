@@ -1,43 +1,20 @@
+
+
+
 package tn.esprit.adminservice.util;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import tn.esprit.adminservice.entity.Profile;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.Date;
-//
-//@Component
-//public class JwtUtil {
-//
-//    @Value("${jwt.secret}")
-//    private String secretKeyBase64;
-//
-//    private javax.crypto.SecretKey secretKey;
-//
-//    private static final long EXPIRATION_MS = 86400000; // 24 hours
-//
-//    @PostConstruct
-//    public void init() {
-//        if (secretKeyBase64 == null) {
-//            throw new IllegalStateException("JWT secret key is not configured. Please set 'jwt.secret' in application.yml");
-//        }
-//        byte[] keyBytes = Base64.getDecoder().decode(secretKeyBase64);
-//        this.secretKey = new SecretKeySpec(keyBytes, SignatureAlgorithm.HS512.getJcaName());
-//    }
-//
-//    public String generateToken(String username) {
-//        return Jwts.builder()
-//                .setSubject(username)
-//                .setIssuedAt(new Date())
-//                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
-//                .signWith(SignatureAlgorithm.HS512, secretKey)
-//                .compact();
-//    }
-//}
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -53,16 +30,26 @@ public class JwtUtil {
             throw new IllegalStateException("JWT secret key is not configured");
         }
         byte[] keyBytes = Base64.getDecoder().decode(secretKeyBase64);
-        this.secretKey = new SecretKeySpec(keyBytes, SignatureAlgorithm.HS512.getJcaName());
+        this.secretKey = new SecretKeySpec(keyBytes, "HmacSHA512");
     }
 
-    public String generateToken(String username, String role) { // Added role parameter
+    // Updated to include userStatus parameter
+    public String generateToken(String username, String role, Profile profile, String userStatus) {
+        List<String> permissions = (profile != null && "ACTIVE".equals(profile.getStatus())) ?
+                profile.getPermissions().stream()
+                        .map(permission -> permission.getName())
+                        .collect(Collectors.toList()) :
+                Collections.emptyList();
+
         return Jwts.builder()
                 .setSubject(username)
                 .claim("role", role)
+                .claim("profileCode", profile != null ? profile.getCode() : null)
+                .claim("permissions", permissions)
+                .claim("status", userStatus) // Add user status to the token
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000))
-                .signWith(SignatureAlgorithm.HS512, secretKey)
+                .signWith(secretKey)
                 .compact();
     }
 }
