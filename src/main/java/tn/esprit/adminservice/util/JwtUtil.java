@@ -46,7 +46,7 @@ public class JwtUtil {
                 .claim("role", role)
                 .claim("profileCode", profile != null ? profile.getCode() : null)
                 .claim("permissions", permissions)
-                .claim("status", userStatus) // Add user status to the token
+                .claim("status", userStatus)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 86400000))
                 .signWith(secretKey)

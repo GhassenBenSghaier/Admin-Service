@@ -31,8 +31,11 @@
 
 
 
+# server configuration
 server:
   port: 8080
+
+# Spring application configuration
 spring:
   application:
     name: admin-service
@@ -47,6 +50,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+
+# Eureka client configuration
 eureka:
   client:
     service-url:
@@ -57,5 +62,7 @@ eureka:
     prefer-ip-address: true  # Optional: ensures IP registration
     leaseRenewalIntervalInSeconds: 30  # Heartbeat interval (default)
     leaseExpirationDurationInSeconds: 90  # Time before Eureka considers the instance expired (default)
+
+# JWT secret key
 jwt:
   secret: X7K9p2mQ8vL5rT3yZn6bQeF4uA1wJ9kLmN5oP6sR7tU8vW9xY0z1aB2c3d4E5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6A7B8C9D
